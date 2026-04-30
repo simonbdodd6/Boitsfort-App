@@ -1,0 +1,1279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Boitsfort Rugby Club Selector – Coach Tabs + Match Center</title>
+<style>
+:root{--bg:#0f172a;--bg2:#14532d;--card:rgba(255,255,255,.08);--border:rgba(255,255,255,.12);--ink:#fff;--green:#16a34a;--red:#ef4444;--blue:#2563eb;}
+*{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;color:var(--ink);background:linear-gradient(135deg,var(--bg),var(--bg2))}
+.wrap{max-width:1700px;margin:0 auto;padding:18px}.card{background:var(--card);border:1px solid var(--border);border-radius:20px}
+.header{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:18px;margin-bottom:16px;flex-wrap:wrap}
+.brand{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.logo{width:76px;height:76px;object-fit:contain;border-radius:14px;background:rgba(255,255,255,.08);padding:6px}
+.eyebrow{font-size:12px;letter-spacing:2px;opacity:.8;text-transform:uppercase} h1{margin:4px 0;font-size:34px}.sub{font-size:14px;opacity:.85}
+.controls,.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center} button{border:none;border-radius:12px;padding:10px 14px;font-weight:700;cursor:pointer}
+.btn-white{background:#fff;color:#111827}.btn-green{background:var(--green);color:white}.btn-blue{background:var(--blue);color:white}.btn-red{background:var(--red);color:white}
+.badge{background:rgba(255,255,255,.12);padding:8px 12px;border-radius:999px;font-size:12px}
+.topgrid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1.2fr 1.3fr;gap:12px;margin-bottom:16px}
+.stat{padding:14px}.label{font-size:12px;opacity:.78;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px}
+.main{display:grid;grid-template-columns:1.45fr .95fr;gap:16px;align-items:start}
+.pitch{position:relative;min-height:900px;border-radius:24px;overflow:hidden;background:linear-gradient(180deg,#16a34a,#15803d);border:2px solid rgba(255,255,255,.14)}
+.line{position:absolute;left:0;right:0;height:2px;background:rgba(255,255,255,.9)}.vline{position:absolute;top:0;bottom:0;left:50%;width:2px;background:rgba(255,255,255,.9)}
+.circle{position:absolute;width:110px;height:110px;left:calc(50% - 55px);top:calc(50% - 55px);border:2px solid rgba(255,255,255,.9);border-radius:999px}
+.pitch-badge{position:absolute;left:16px;top:16px;background:rgba(15,23,42,.75);padding:8px 12px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:1px}
+.slot{position:absolute;transform:translate(-50%,-50%);width:128px;background:rgba(15,23,42,.94);border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:8px;text-align:center;box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.slot .num{font-size:12px;font-weight:800}.slot .pos{font-size:10px;opacity:.82;margin:4px 0 6px}.slot .name{background:rgba(255,255,255,.10);border-radius:10px;padding:8px 6px;font-size:12px;font-weight:700;line-height:1.2;min-height:34px;display:flex;align-items:center;justify-content:center}
+.remove{background:transparent;color:white;font-size:11px;padding:0;margin-top:6px;opacity:.9}
+.bench{margin-top:16px;padding:16px}.bench-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.bench-slot{background:rgba(15,23,42,.55);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:10px;min-height:112px}
+.side{padding:16px;position:sticky;top:16px}
+input[type=text],input[type=datetime-local],select,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(15,23,42,.78);color:white}
+.search{margin-bottom:12px}.players{max-height:900px;overflow:auto;display:grid;gap:10px}
+.player{background:rgba(15,23,42,.94);border:1px solid rgba(255,255,255,.10);border-radius:14px;padding:12px;cursor:grab}.player.unavail{background:rgba(127,29,29,.92);cursor:not-allowed}
+.player-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.player-name{font-size:14px;font-weight:700}
+.toggle{border-radius:999px;font-size:11px;padding:6px 10px}.avail{background:var(--green);color:white}.unavail-btn{background:var(--red);color:white}
+.note{width:100%;margin-top:10px;padding:9px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.08);color:white;font-size:12px}
+.small{font-size:12px;opacity:.8}
+.weather-box{background:rgba(15,23,42,.45);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:12px;margin-top:10px}
+.weather-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.player-tools{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:10px}
+.match-center{margin-top:18px;padding:16px}
+.match-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.mini-card{background:rgba(15,23,42,.4);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:12px}
+.feed-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.feed-list{display:grid;gap:8px;max-height:360px;overflow:auto}
+.feed-item{padding:10px;border-radius:12px;background:rgba(15,23,42,.55);border:1px solid rgba(255,255,255,.08)}
+.feed-item a{color:white;text-decoration:none} iframe{width:100%;min-height:480px;border:0;border-radius:14px;background:white}
+.source-note{font-size:12px;opacity:.8;margin-top:8px}
+
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:10px 0 0}
+.link-btn{text-decoration:none}
+.group-filter-row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 14px}
+.group-filter{padding:8px 10px;border-radius:999px;border:none;background:rgba(255,255,255,.08);color:white;font-size:12px;font-weight:700;cursor:pointer}
+.group-filter.active{background:#16a34a}
+.group-badge{display:inline-block;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.12);font-size:11px;margin-top:6px}
+.group-select{width:100%;margin-top:8px;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.08);color:white;font-size:12px}
+.mini-note{font-size:12px;opacity:.8;line-height:1.4}
+
+
+.hidden{display:none !important}
+.modebar{display:flex;gap:10px;flex-wrap:wrap;margin:-2px 0 16px}
+.modebtn{border:none;border-radius:14px;padding:10px 16px;font-weight:800;cursor:pointer;background:rgba(15,23,42,.7);color:white}
+.modebtn.active{background:#16a34a}
+.medical-page{padding:6px 0 4px}
+.medical-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.medical-kpi{padding:16px}
+.medical-kpi-value{font-size:28px;font-weight:800;margin-top:4px}
+.medical-layout{display:grid;grid-template-columns:1.08fr .92fr;gap:16px;align-items:start}
+.medical-card{padding:18px}
+.medical-help{font-size:13px;opacity:.85;line-height:1.45}
+.medical-form{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.medical-field{display:grid;gap:8px}
+.medical-field label{font-size:12px;letter-spacing:1px;text-transform:uppercase;opacity:.8}
+.medical-field input,.medical-field select,.medical-field textarea{
+  width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.15);
+  background:rgba(15,23,42,.82);color:white
+}
+.medical-field textarea{min-height:170px;font-family:Arial,sans-serif}
+.medical-current{padding:12px;border-radius:12px;background:rgba(15,23,42,.48);border:1px solid rgba(255,255,255,.08);min-height:48px;font-size:13px;line-height:1.4}
+.medical-board-list{display:grid;gap:10px;max-height:560px;overflow:auto}
+.medical-board-item{padding:12px;border-radius:14px;background:rgba(15,23,42,.55);border:1px solid rgba(255,255,255,.08);cursor:pointer}
+.medical-board-name{font-weight:800;margin-bottom:6px}
+.medical-board-meta{font-size:13px;opacity:.88;line-height:1.4}
+.medpill{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800}
+.med-available{background:#166534}
+.med-modified{background:#a16207}
+.med-rtp{background:#0f766e}
+.med-unavailable{background:#991b1b}
+.medical-empty{font-size:13px;opacity:.78}
+
+.medical-player-wrap{position:relative}
+.medical-player-dropdown{position:absolute;top:100%;left:0;right:0;background:rgba(15,23,42,.99);border:1px solid rgba(255,255,255,.14);border-radius:12px;max-height:220px;overflow:auto;z-index:20;display:none}
+.medical-player-dropdown.show{display:block}
+.medical-player-option{padding:10px 12px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.06)}
+.medical-player-option:last-child{border-bottom:none}
+.medical-player-option:hover,.medical-player-option.active{background:rgba(255,255,255,.08)}
+
+
+
+.assign-modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,.7);display:none;align-items:center;justify-content:center;z-index:1000}
+.assign-modal-backdrop.show{display:flex}
+.assign-modal{width:min(460px,92vw);background:linear-gradient(135deg,rgba(15,23,42,.98),rgba(22,101,52,.94));border:1px solid rgba(255,255,255,.14);border-radius:20px;padding:18px;box-shadow:0 18px 48px rgba(0,0,0,.35)}
+.assign-modal h3{margin:0 0 6px}
+.assign-modal .small{margin-bottom:12px;opacity:.82}
+.assign-modal input,.assign-modal select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff}
+.assign-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:12px}
+.slot .name.clickable{cursor:pointer}
+
+
+.copy-modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,.72);display:none;align-items:center;justify-content:center;z-index:1001}
+.copy-modal-backdrop.show{display:flex}
+.copy-modal{width:min(420px,92vw);background:linear-gradient(135deg,rgba(15,23,42,.98),rgba(22,101,52,.94));border:1px solid rgba(255,255,255,.16);border-radius:20px;padding:18px;box-shadow:0 18px 48px rgba(0,0,0,.35)}
+.copy-modal h3{margin:0 0 8px}
+.copy-modal select{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.08);color:#fff;margin:10px 0 12px}
+.copy-actions{display:flex;justify-content:flex-end;gap:10px}
+
+
+.framesports-card-stats{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.fs-chip{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:4px 7px;font-size:11px;font-weight:800;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.10)}
+.fs-chip.good{background:rgba(22,163,74,.35)}
+.fs-chip.warn{background:rgba(161,98,7,.35)}
+.fs-chip.bad{background:rgba(127,29,29,.45)}
+.fs-status{font-size:11px;opacity:.72;margin-top:6px}
+
+@media (max-width:1400px){.topgrid{grid-template-columns:1fr 1fr 1fr;}}
+@media (max-width:1250px){.main{grid-template-columns:1fr}.side{position:static}.feed-grid{grid-template-columns:1fr}.medical-layout{grid-template-columns:1fr}.medical-kpis{grid-template-columns:1fr 1fr}}
+@media (max-width:760px){.topgrid{grid-template-columns:1fr}.bench-grid{grid-template-columns:repeat(2,1fr)}.weather-grid{grid-template-columns:1fr}.player-tools{grid-template-columns:1fr}.medical-kpis{grid-template-columns:1fr}.medical-form{grid-template-columns:1fr}}
+
+.training-link-small{
+  display:inline-block;
+  margin-top:10px;
+  padding:7px 10px;
+  border-radius:10px;
+  background:rgba(22,163,74,.9);
+  color:white;
+  text-decoration:none;
+  font-size:12px;
+  font-weight:800;
+}
+.training-link-small:hover{background:#16a34a}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card header">
+    <div class="brand">
+      <img class="logo" src="data:image/png;base64,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" alt="Boitsfort logo">
+      <div>
+        <div class="eyebrow">Boitsfort Rugby Club</div>
+        <h1>Live Coach Matchday Selector</h1>
+        <div class="sub">Coach-specific tabs, Senior + U18, weather, editable bench, and a Match Center fed by public rugby pages.</div>
+      </div>
+    </div>
+    <div class="controls">
+      <button id="clearBtn" class="btn-white">Clear Team</button>
+      <button id="csvBtn" class="btn-blue">Export CSV</button>
+      <button id="copyCoachBtn" class="btn-soft">Copy From Coach</button>
+      <button id="exportGraphicBtn" class="btn-green">Export Graphic</button>
+      <span id="syncStatus" class="badge">Connecting…</span>
+    </div>
+  </div>
+
+  <div class="modebar"><button id="selectorModeBtn" class="modebtn active">Selector</button><button id="medicalModeBtn" class="modebtn">Medical</button></div>
+
+  <div id="selectorView">
+  <div class="topgrid">
+    <div class="card stat"><div class="label">Programme</div><div class="row" id="teamRow"></div></div>
+    <div class="card stat"><div class="label">Weekend</div><div class="row" id="weekendRow"></div></div>
+    <div class="card stat"><div class="label">Squad</div><div class="row" id="squadRow"></div></div>
+    <div class="card stat"><div class="label">Coach</div><div class="row" id="coachRow"></div><a id="trainingLinkBtn" class="training-link-small" target="_blank" rel="noopener">Training</a><div class="source-note" id="coachHelp"></div></div>
+    <div class="card stat">
+      <div class="label">Match Setup</div>
+      <div class="row" style="margin-bottom:8px;">
+        <button id="homeBtn" class="btn-green">Home</button>
+        <button id="awayBtn" class="btn-blue">Away</button>
+      </div>
+      <div class="row" style="margin-bottom:8px;">
+        <select id="venueSelect">
+          <option value="home">Boitsfort Rugby Club</option>
+          <option value="waterloo">Waterloo Rugby Club</option>
+          <option value="liege">Liège Rugby Club</option>
+        </select>
+      </div>
+      <div class="row" style="margin-bottom:8px;">
+        <input id="opponentInput" type="text" placeholder="Opponent name">
+      </div>
+      <div class="row">
+        <input id="kickoffInput" type="datetime-local">
+        <button id="weatherBtn" class="btn-green">Weather</button>
+      </div>
+    </div>
+    <div class="card stat">
+      <div class="label">Kick-off Weather</div>
+      <div class="weather-box">
+        <div id="weatherSummary" class="small">Set venue and kick-off time, then tap Weather.</div>
+        <div id="weatherGrid" class="weather-grid" style="margin-top:10px;"></div>
+        <div id="weatherImpact" class="small" style="margin-top:10px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main">
+    <div>
+      <div class="pitch" id="pitch">
+        <div class="line" style="top:8%;"></div><div class="line" style="top:24%;"></div><div class="line" style="top:50%;"></div><div class="line" style="top:76%;"></div><div class="line" style="bottom:8%;"></div>
+        <div class="vline"></div><div class="circle"></div><div class="pitch-badge" id="pitchBadge"></div>
+      </div>
+      <div class="card bench">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+          <h3 style="margin:0 0 10px;">Bench</h3>
+          <div class="small">Each coach tab keeps its own saved bench and lineup.</div>
+        </div>
+        <div class="bench-grid" id="benchGrid"></div>
+      </div>
+    </div>
+    <div class="card side">
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap;">
+        <h3 style="margin:0;">Squad List</h3>
+        <div class="small" id="unassignedCount"></div>
+      </div>
+      <div class="player-tools">
+        <input id="newPlayerInput" type="text" placeholder="Add player to current programme">
+        <button id="addPlayerBtn" class="btn-green">Add Player</button>
+      </div>
+      <input id="searchInput" class="search" type="text" placeholder="Search players">
+      <div class="small" id="rosterInfo" style="margin-bottom:10px;"></div>
+      <div class="mini-note">Full alphabetical squad list stays visible here. Drag players onto the pitch, or click an empty position to assign a player directly.</div>
+      <div id="groupFilters" class="group-filter-row"></div>
+      <div class="players" id="playerList"></div>
+    </div>
+  </div>
+
+  <div class="card match-center">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+      <div>
+        <div class="label">Match Center</div>
+        <h3 style="margin:0;">Results and standings sources</h3>
+      </div>
+      <div class="match-tabs" id="sourceRow"></div>
+    </div>
+    <div class="source-note" id="sourceNote"></div>
+    <div class="feed-grid" style="margin-top:12px;">
+      <div class="mini-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+          <strong>Recent public items</strong>
+          <button id="openSourceBtn" class="btn-blue">Open official page</button>
+        </div>
+        <div class="feed-list" id="feedList" style="margin-top:10px;"></div>
+      </div>
+      <div class="mini-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+          <strong>Official page preview</strong>
+          <span class="small">If preview is blocked, use the button.</span>
+        </div>
+        <iframe id="sourceFrame" title="Official standings and results source"></iframe>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+  <div id="medicalView" class="medical-page hidden">
+    <div class="card medical-card" style="margin-bottom:16px;">
+      <div class="label">Medical</div>
+      <h2 style="margin:0 0 8px;">Medical Staff Dashboard</h2>
+      <div class="medical-help">Search or select a player, write the medical update, and mark them unavailable when needed. Players set to <strong>Injured</strong> or <strong>Unavailable</strong> become unavailable on the selector automatically.</div>
+    </div>
+
+    <div class="medical-kpis">
+      <div class="card medical-kpi"><div class="label">Programme</div><div id="medKpiProgramme" class="medical-kpi-value">Senior</div></div>
+      <div class="card medical-kpi"><div class="label">Available</div><div id="medKpiAvailable" class="medical-kpi-value">0</div></div>
+      <div class="card medical-kpi"><div class="label">Modified / RTP</div><div id="medKpiModified" class="medical-kpi-value">0</div></div>
+      <div class="card medical-kpi"><div class="label">Unavailable / Injured</div><div id="medKpiUnavailable" class="medical-kpi-value">0</div></div>
+    </div>
+
+    <div class="medical-layout">
+      <div class="card medical-card">
+        <div class="label">Player update</div>
+        <div class="medical-form">
+          <div class="medical-field" style="grid-column:1 / -1;">
+            <label for="medicalPlayerSearch">Player</label>
+            <div class="medical-player-wrap"><input id="medicalPlayerSearch" list="medicalPlayerOptions" placeholder="Search player name..."><datalist id="medicalPlayerOptions"></datalist><div class="small" style="margin-top:6px;">Start typing a player name, then choose from the browser suggestion list.</div></div>
+          </div>
+          <div class="medical-field">
+            <label for="medicalStatusInput">Status</label>
+            <select id="medicalStatusInput">
+              <option>Available</option>
+              <option>Modified</option>
+              <option>Return to Play</option>
+              <option>Injured</option>
+              <option>Unavailable</option>
+            </select>
+          </div>
+          <div class="medical-field">
+            <label for="medicalIssueInput">Issue / injury</label>
+            <input id="medicalIssueInput" type="text" placeholder="Hamstring, shoulder, concussion...">
+          </div>
+          <div class="medical-field">
+            <label for="medicalRestrictionInput">Restriction</label>
+            <input id="medicalRestrictionInput" type="text" placeholder="No contact, modified minutes, no max speed...">
+          </div>
+          <div class="medical-field">
+            <label for="medicalReturnInput">Expected return</label>
+            <input id="medicalReturnInput" type="text" placeholder="Friday review / 2 weeks / cleared">
+          </div>
+          <div class="medical-field">
+            <label for="medicalUpdatedByInput">Updated by</label>
+            <input id="medicalUpdatedByInput" type="text" placeholder="Doctor / physio / medical staff">
+          </div>
+          <div class="medical-field">
+            <label>Current summary</label>
+            <div id="medicalCurrentStatus" class="medical-current">No player selected yet.</div>
+          </div>
+          <div class="medical-field" style="grid-column:1 / -1;">
+            <label for="medicalNotesInput">Medical notes</label>
+            <textarea id="medicalNotesInput" placeholder="Write the medical update here..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="card medical-card">
+        <div class="label">Current unavailable players</div>
+        <h3 style="margin:0 0 12px;">Injury / unavailable chart</h3>
+        <div id="medicalBoardList" class="medical-board-list"></div>
+      </div>
+    </div>
+  </div>
+
+
+<div id="assignModalBackdrop" class="assign-modal-backdrop">
+  <div class="assign-modal">
+    <div class="label">Assign player</div>
+    <h3 id="assignModalTitle">Assign player</h3>
+    <div class="small">Type part of the name, choose a player, then assign.</div>
+    <input id="assignModalInput" list="assignModalOptions" placeholder="Search player...">
+    <datalist id="assignModalOptions"></datalist>
+    <div class="assign-actions">
+      <button id="assignModalClose" class="toggle">Close</button>
+      <button id="assignModalSave" class="btn-green">Assign</button>
+    </div>
+  </div>
+</div>
+
+<div id="copyCoachBackdrop" class="copy-modal-backdrop">
+  <div class="copy-modal">
+    <div class="label">Copy selection</div>
+    <h3>Copy another coach’s team</h3>
+    <div class="small">Copy the current programme + weekend + squad from another coach into this coach tab.</div>
+    <select id="copyCoachSelect"></select>
+    <div class="copy-actions">
+      <button id="copyCoachClose" class="toggle">Close</button>
+      <button id="copyCoachConfirm" class="btn-green">Copy Team</button>
+    </div>
+  </div>
+</div>
+<canvas id="exportGraphicCanvas" width="1400" height="1900" style="display:none;"></canvas>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {"apiKey": "AIzaSyBxwwrbIIHjoiOdTNYarE7IfERhq7mbEZs", "authDomain": "boitsfort-premier-selection.firebaseapp.com", "projectId": "boitsfort-premier-selection", "storageBucket": "boitsfort-premier-selection.firebasestorage.app", "messagingSenderId": "790486324898", "appId": "1:790486324898:web:5e60c29d8f35de7bd969fb", "measurementId": "G-9Y09J7FTXN"};
+const spots = [{"code": "15", "name": "Fullback", "top": 7, "left": 50}, {"code": "14", "name": "Right Wing", "top": 18, "left": 84}, {"code": "13", "name": "Outside Centre", "top": 27, "left": 68}, {"code": "12", "name": "Inside Centre", "top": 27, "left": 32}, {"code": "11", "name": "Left Wing", "top": 18, "left": 16}, {"code": "10", "name": "Fly Half", "top": 42, "left": 60}, {"code": "9", "name": "Scrum Half", "top": 48, "left": 40}, {"code": "8", "name": "Number 8", "top": 61, "left": 50}, {"code": "7", "name": "Openside", "top": 67, "left": 70}, {"code": "6", "name": "Blindside", "top": 67, "left": 30}, {"code": "5", "name": "Lock", "top": 79, "left": 58}, {"code": "4", "name": "Lock", "top": 79, "left": 42}, {"code": "3", "name": "Tighthead", "top": 91, "left": 66}, {"code": "2", "name": "Hooker", "top": 91, "left": 50}, {"code": "1", "name": "Loosehead", "top": 91, "left": 34}];
+const benchSpots = ["16", "17", "18", "19", "20", "21", "22", "23"];
+const venues = {"home": {"label": "Boitsfort Rugby Club", "address": "Chaussée de La Hulpe 17, 1880 Ohain, Belgium", "lat": 50.694, "lon": 4.47}, "waterloo": {"label": "Waterloo Rugby Club", "address": "Chaussée de la Hulpe 17, 1180 Uccle, Belgium", "lat": 50.7876, "lon": 4.3892}, "liege": {"label": "Liège Rugby Club", "address": "Allée du Stade 8, 4031 Angleur, Belgium", "lat": 50.6115, "lon": 5.579}};
+const teamOptions = ["Senior","U18"];
+const weekendOptions = ["This Weekend","Next Weekend"];
+const squadOptions = ["1st XV","2nd XV"];
+const coachOptions = {"Senior": ["Simon", "Xavier", "Tom", "Flo"], "U18": ["Simon", "Lorenzo", "Sam", "Louis"]};
+const trainingLinks = {
+  "Senior": "https://docs.google.com/spreadsheets/d/18mXKfMNZWwuZ1sdoVdL__IDilHA1m_FYgzgLE9tnvF4/edit?usp=drivesdk",
+  "U18": "https://docs.google.com/spreadsheets/d/1q9J8ePo_YPSvmJ19Yr63ErP_qK9BeP7WUPe2l2MiyF8/edit?usp=drivesdk"
+};
+const sourceMap = {"Senior__1st XV": {"label": "Sportkipik Division 1", "url": "https://sportkipik.be/-division-1-", "note": "Public division page for current standings and recent results."}, "Senior__2nd XV": {"label": "Sportkipik D1 Réserves", "url": "https://sportkipik.be/-d1-reserves-", "note": "Public reserve division page for current standings and recent results."}, "U18__1st XV": {"label": "Sportkipik U16 & U18", "url": "https://sportkipik.be/-u16-u18-", "note": "Public youth page that publishes U18 results and standings coverage."}, "U18__2nd XV": {"label": "Sportkipik U16 & U18", "url": "https://sportkipik.be/-u16-u18-", "note": "Same youth source until you give a dedicated second-team page."}};
+const seniorRoster = ["Adrian Koch", "Adrien Hernandez", "Alexander Anderson", "Alexandre Vandamme", "Alexandre Perin", "Alexis Choda", "Alpha Omba", "Antoine Van de Velde", "Basile Rey", "Benjamin Rossignol", "Benjamin Moortgat", "Benoît Princen", "Boaz Vrolijk", "Brandon Faddar", "Casimir Fayt", "Ciaran Moore", "Cillian Moore", "Damien Feller", "Douglas Vanderlinden", "Elias Blommaert", "Eléazar Massuama", "Emile Errera", "Félix Fontaine", "Gil Fortpied", "Henri Atkinson", "Jean Lebeaupin", "Jean-Prieur Du Plessis", "Jeroen Rottier", "Johannes Prioux", "Julian Paquay", "Kevin Springael", "Lilian Numbi", "Louis Debarre", "Louis Wuestenberghs", "Loïc Potier", "Léo Perrier", "Léopold Roobaert", "Manassé Massuama", "Martin Dedecker", "Mathias Doornaert", "Mathys Holemans", "Mauro Dragonetti", "Maxence Rey", "Maxime Graf", "Maxime M’Rad", "Michael Vanlierde", "Michaël De Molder", "Miguel Fachada", "Nicolas Baufay", "Noé Biernaux", "Omar Blommaert", "Pierre-louis Cristofani", "Pierrot Delvaux", "Ravyl Goeminne", "Romain Graf", "Romain Brantegem", "Romain Ziani", "Romain Leloup", "Sacha Luis", "Samuel Nysenholc", "Thomas Berry", "Thomas Renard", "Théau Colin", "Tiago Tollet", "Tom VAN DER STRATEN WAILLET", "Ulysse Maskens", "Victor Peeters", "Victor Roberfroid", "Vincent Jouvenne", "Vincent Ferrante", "Cyril Freyling", "Tanguy Dhz", "Terence Delvaux"];
+const u18Roster = ["Gaston Debroux", "Gauvain Querton", "Gaétan Van Aken", "Gianlorenzo De Salvo", "Gil Lardinois", "Henri Coton", "Inaki Bailly", "Jules Grzeszczak", "Jules Galland", "Jules Nolette", "Daniele Barneschi", "David Videira Gomes", "David Meyer", "Eduardo Dockier Leitao", "Edward Murphy", "Ferruccio Lejour", "Finlay McCleery", "Finn Keeley", "Florian De Lauw", "Jules Massange", "Laszlo Goor", "Lucien Peeters", "Manoah Tshimanga", "Martin Moyart", "Mason Ruano", "Matteo Ranucci", "Michael Baker", "Michalack Tsiebos", "Molitor Theo", "Otto de Haes", "Pacome Barrau", "Paolo Bucella", "Paul Lee", "Rafael Dahmane", "Ray Alabern", "Roan Collins", "Romain Chabot", "Sacha Cooreman", "Tao Lardinois", "Thomas Huwaert", "Ugo Dragonetti", "Valentin Biernaux", "Virgile Baudry", "Wyatt Belanger", "Yannis Belahcen", "Diego Kool", "Milan van der Hout", "Theo Atkinson", "Adrian Trabada da Silva", "Alexander Wansink Manglano", "Augustin Lefebvre", "Baptiste Germain", "Baptiste Sury", "Blaise Altenloh", "Cassiel Urbanska Richel", "Clem Nys", "Constantin Sury", "Cuan O'Neill"];
+const positionGroups = ["All","Front Row","Second Row","Back Row","Half Backs","Centres","Back Three","Utility","Ungrouped"];
+const defaultPositionGroup = "Ungrouped";
+
+
+function defaultCoachForTeam(team) { return (coachOptions[team] && coachOptions[team][0]) || "Coach"; }
+function buildBoardMap(defaultValue) {
+  const out = {};
+  for (const team of teamOptions) for (const weekend of weekendOptions) for (const squad of squadOptions) for (const coach of coachOptions[team]) {
+    out[team + "__" + weekend + "__" + squad + "__" + coach] = typeof defaultValue === "function" ? defaultValue(team, weekend, squad, coach) : JSON.parse(JSON.stringify(defaultValue));
+  }
+  return out;
+}
+function buildTeamWeekendMap(defaultValue) {
+  const out = {};
+  for (const team of teamOptions) for (const weekend of weekendOptions) {
+    out[team + "__" + weekend] = typeof defaultValue === "function" ? defaultValue(team, weekend) : JSON.parse(JSON.stringify(defaultValue));
+  }
+  return out;
+}
+
+const defaultState = {
+  syncRevision: 0,
+  lastSavedAt: "",
+  uiMode:"selector",
+  assignTargetSlot:"",
+  search:"",
+  activeGroupFilter:"All",
+  selectedMedicalPlayer:"",
+  medicalByTeam:{ Senior:{}, U18:{} },
+  playerPositionGroups:{},
+  playerFrameAutoMap:{},
+  activeTeam:"Senior",
+  activeWeekend:"This Weekend",
+  activeSquad:"1st XV",
+  activeCoach:"Simon",
+  rostersByTeam: { Senior: seniorRoster, U18: u18Roster },
+  assignmentsByBoard: buildBoardMap({}),
+  unavailableByTeamWeekend: buildTeamWeekendMap({}),
+  notesByTeamWeekend: buildTeamWeekendMap({}),
+  opponentByBoard: buildBoardMap(""),
+  venueModeByBoard: buildBoardMap("home"),
+  kickoffByBoard: buildBoardMap(""),
+  weatherByBoard: buildBoardMap(null)
+};
+
+let state = JSON.parse(JSON.stringify(defaultState));
+const LOCAL_STATE_KEY = "boitsfort-selector-state";
+try {
+  const localRaw = localStorage.getItem(LOCAL_STATE_KEY);
+  if (localRaw) state = ensureShape(JSON.parse(localRaw));
+} catch(e) {}
+if (!state.syncRevision) state.syncRevision = Date.now();
+let sharedDocRef = null, firestoreReady = false, isApplyingRemote = false, saveTimer = null;
+const boardKey = ()=> state.activeTeam + "__" + state.activeWeekend + "__" + state.activeSquad + "__" + state.activeCoach;
+const teamWeekendKey = ()=> state.activeTeam + "__" + state.activeWeekend;
+const assignments = ()=> state.assignmentsByBoard[boardKey()] || {};
+const unavailable = ()=> state.unavailableByTeamWeekend[teamWeekendKey()] || {};
+const notes = ()=> state.notesByTeamWeekend[teamWeekendKey()] || {};
+const opponent = ()=> state.opponentByBoard[boardKey()] || "";
+const venueMode = ()=> state.venueModeByBoard[boardKey()] || "home";
+const kickoff = ()=> state.kickoffByBoard[boardKey()] || "";
+const weather = ()=> state.weatherByBoard[boardKey()] || null;
+const roster = ()=> state.rostersByTeam[state.activeTeam] || [];
+const sourceKey = ()=> state.activeTeam + "__" + state.activeSquad;
+const sourceConfig = ()=> sourceMap[sourceKey()] || {label:"No source set", url:"", note:""};
+
+let frameStatsByNumber = {};
+let frameStatsLoaded = false;
+
+function safeNumberDisplay(value, fallback="0") {
+  const n = Number(value);
+  return Number.isFinite(n) ? String(Math.round(n * 100) / 100) : fallback;
+}
+
+function colourForTacklePct(v) {
+  const n = Number(v || 0);
+  if (n >= 85) return "good";
+  if (n >= 60) return "warn";
+  return "bad";
+}
+
+function normaliseFrameStat(raw) {
+  if (!raw) return null;
+  const tacklePct = raw.tacklePct ?? raw.tacklePercentage ?? raw.tackle_percent ?? raw.tackle_percentage ?? 0;
+  const workratePerMin = raw.workratePerMin ?? raw.workRatePerMin ?? raw.workrate_per_min ?? raw.work_rate_per_min ?? raw.wrPerMin ?? raw.wr_min ?? raw.workrate ?? 0;
+  const mvpPerMin = raw.mvpPerMin ?? raw.mvpPointsPerMin ?? raw.mvp_points_per_min ?? raw.mvp_per_min ?? raw.mvpPoints ?? raw.mvp ?? 0;
+  return {
+    player: String(raw.player ?? raw.player_number ?? raw.id ?? ""),
+    tacklePct,
+    workratePerMin,
+    mvpPerMin
+  };
+}
+
+async function loadFrameSportsStats() {
+  try {
+    const res = await fetch("/api/frameStats?ts=" + Date.now(), { cache: "no-store" });
+    const data = await res.json();
+    const stats = Array.isArray(data.playerStats) ? data.playerStats : [];
+    frameStatsByNumber = {};
+    stats.forEach(s => {
+      const item = normaliseFrameStat(s);
+      if (item && item.player) frameStatsByNumber[item.player] = item;
+    });
+    frameStatsLoaded = true;
+    renderPlayers();
+  } catch (e) {
+    console.error("FrameSports stats failed", e);
+    frameStatsLoaded = false;
+  }
+}
+
+function autoLearnFrameNumber(name, slotCode) {
+  if (!name || !slotCode) return;
+  state.playerFrameAutoMap = state.playerFrameAutoMap || {};
+  if (!state.playerFrameAutoMap[name] && frameStatsByNumber[String(slotCode)]) {
+    state.playerFrameAutoMap[name] = String(slotCode);
+  }
+}
+
+function getFrameNumberForPlayer(name) {
+  state.playerFrameAutoMap = state.playerFrameAutoMap || {};
+  if (state.playerFrameAutoMap[name]) return String(state.playerFrameAutoMap[name]);
+
+  const entry = Object.entries(assignments()).find(([slot, player]) => player === name);
+  if (entry && frameStatsByNumber[String(entry[0])]) {
+    state.playerFrameAutoMap[name] = String(entry[0]);
+    return String(entry[0]);
+  }
+
+  return "";
+}
+
+function getFrameStatsForPlayer(name) {
+  const frameNo = getFrameNumberForPlayer(name);
+  return frameNo ? frameStatsByNumber[String(frameNo)] : null;
+}
+
+function renderFrameStatsForPlayer(name) {
+  const s = getFrameStatsForPlayer(name);
+  if (!s) return frameStatsLoaded ? "" : '<div class="fs-status">FrameSports loading…</div>';
+  const tClass = colourForTacklePct(s.tacklePct);
+  return `<div class="framesports-card-stats">
+    <span class="fs-chip ${tClass}">Tkl ${safeNumberDisplay(s.tacklePct)}%</span>
+    <span class="fs-chip">WR/min ${safeNumberDisplay(s.workratePerMin)}</span>
+    <span class="fs-chip">MVP/min ${safeNumberDisplay(s.mvpPerMin)}</span>
+  </div>`;
+}
+
+
+function syncStatus(t){ document.getElementById("syncStatus").textContent = t; }
+function ensureShape(s) {
+  const merged = JSON.parse(JSON.stringify(defaultState));
+  if (s && typeof s === "object") {
+    Object.assign(merged, {
+      syncRevision: s.syncRevision ?? merged.syncRevision,
+      lastSavedAt: s.lastSavedAt ?? merged.lastSavedAt,
+      uiMode: s.uiMode ?? merged.uiMode,
+      search: s.search ?? merged.search,
+      activeGroupFilter: s.activeGroupFilter ?? merged.activeGroupFilter,
+      selectedMedicalPlayer: s.selectedMedicalPlayer ?? merged.selectedMedicalPlayer,
+      activeTeam: s.activeTeam ?? merged.activeTeam,
+      activeWeekend: s.activeWeekend ?? merged.activeWeekend,
+      activeSquad: s.activeSquad ?? merged.activeSquad,
+      activeCoach: s.activeCoach ?? merged.activeCoach
+    });
+    merged.medicalByTeam = Object.assign({}, merged.medicalByTeam, s.medicalByTeam || {});
+    merged.playerFrameAutoMap = Object.assign({}, s.playerFrameAutoMap || {});
+    merged.playerPositionGroups = Object.assign({}, s.playerPositionGroups || {});
+    merged.rostersByTeam = Object.assign({}, merged.rostersByTeam, s.rostersByTeam || {});
+    for (const k of Object.keys(merged.assignmentsByBoard)) merged.assignmentsByBoard[k] = Object.assign({}, (s.assignmentsByBoard||{})[k] || {});
+    for (const k of Object.keys(merged.unavailableByTeamWeekend)) merged.unavailableByTeamWeekend[k] = Object.assign({}, (s.unavailableByTeamWeekend||{})[k] || {});
+    for (const k of Object.keys(merged.notesByTeamWeekend)) merged.notesByTeamWeekend[k] = Object.assign({}, (s.notesByTeamWeekend||{})[k] || {});
+    for (const k of Object.keys(merged.opponentByBoard)) merged.opponentByBoard[k] = (s.opponentByBoard||{})[k] ?? merged.opponentByBoard[k];
+    for (const k of Object.keys(merged.venueModeByBoard)) merged.venueModeByBoard[k] = (s.venueModeByBoard||{})[k] ?? merged.venueModeByBoard[k];
+    for (const k of Object.keys(merged.kickoffByBoard)) merged.kickoffByBoard[k] = (s.kickoffByBoard||{})[k] ?? merged.kickoffByBoard[k];
+    for (const k of Object.keys(merged.weatherByBoard)) merged.weatherByBoard[k] = (s.weatherByBoard||{})[k] ?? merged.weatherByBoard[k];
+  }
+  if (!coachOptions[merged.activeTeam].includes(merged.activeCoach)) merged.activeCoach = defaultCoachForTeam(merged.activeTeam);
+  return merged;
+}
+function queueSave() {
+  state.syncRevision = Date.now();
+  state.lastSavedAt = new Date().toISOString();
+  try { localStorage.setItem(LOCAL_STATE_KEY, JSON.stringify(state)); } catch(e) {}
+  if (!sharedDocRef || isApplyingRemote) return;
+  clearTimeout(saveTimer);
+  const snapshot = JSON.parse(JSON.stringify(state));
+  syncStatus("Saving…");
+  saveTimer = setTimeout(async ()=>{
+    try{
+      await sharedDocRef.set(snapshot);
+      firestoreReady = true;
+      syncStatus("Saved live");
+    }catch(e){
+      console.error(e);
+      syncStatus("Save failed");
+    }
+  }, 80);
+}
+function setOpponent(v){ state.opponentByBoard[boardKey()] = v; queueSave(); }
+function setVenueMode(v){ state.venueModeByBoard[boardKey()] = v; if(v==="home") document.getElementById("venueSelect").value="home"; queueSave(); render(); }
+function setKickoff(v){ state.kickoffByBoard[boardKey()] = v; queueSave(); }
+function addPlayer() {
+  const input = document.getElementById("newPlayerInput");
+  const name = (input.value || "").trim();
+  if (!name) return;
+  const names = [...roster()];
+  if (!names.includes(name)) {
+    names.push(name); names.sort((a,b)=>a.localeCompare(b));
+    state.rostersByTeam[state.activeTeam] = names; queueSave(); render();
+  }
+  input.value = "";
+}
+function deletePlayer(name) {
+  if (!confirm("Remove " + name + " from " + state.activeTeam + " roster?")) return;
+  state.rostersByTeam[state.activeTeam] = roster().filter(n => n !== name);
+  for (const weekend of weekendOptions) {
+    const twk = state.activeTeam + "__" + weekend;
+    delete state.unavailableByTeamWeekend[twk][name];
+    delete state.notesByTeamWeekend[twk][name];
+    for (const squad of squadOptions) for (const coach of coachOptions[state.activeTeam]) {
+      const bk = state.activeTeam + "__" + weekend + "__" + squad + "__" + coach;
+      const board = Object.assign({}, state.assignmentsByBoard[bk] || {});
+      Object.keys(board).forEach(k => { if (board[k] === name) delete board[k]; });
+      state.assignmentsByBoard[bk] = board;
+    }
+  }
+  queueSave(); render();
+}
+function weatherImpact(w) {
+  if (!w) return "";
+  const wind = Number(w.windSpeed || 0), rain = Number(w.precip || 0), rainProb = Number(w.rainProb || 0);
+  const bits = [];
+  if (wind >= 25) bits.push("High wind: harder long kicking, lineout throws and cross-field play.");
+  else if (wind >= 15) bits.push("Moderate wind: tactical kicking and exits need more control.");
+  else bits.push("Light wind: good conditions for kicking and wider attack.");
+  if (rain >= 2 || rainProb >= 60) bits.push("Wet ball risk: expect more handling errors and more value in territory.");
+  else if (rain > 0 || rainProb >= 30) bits.push("Some moisture: handling and footing may be slightly affected.");
+  else bits.push("Mostly dry: better conditions for width and fast ball movement.");
+  return bits.join(" ");
+}
+async function fetchWeather() {
+  const venue = venues[venueMode()], dt = kickoff();
+  if (!venue || !dt) { alert("Set venue and kick-off time first."); return; }
+  syncStatus("Loading weather…");
+  try {
+    const date = new Date(dt), targetHour = date.getHours();
+    const start = dt.slice(0,10);
+    const url = "https://api.open-meteo.com/v1/forecast?latitude=" + encodeURIComponent(venue.lat) +
+      "&longitude=" + encodeURIComponent(venue.lon) +
+      "&hourly=temperature_2m,precipitation_probability,precipitation,windspeed_10m,winddirection_10m" +
+      "&timezone=Europe%2FBrussels&start_date=" + start + "&end_date=" + start;
+    const res = await fetch(url); const data = await res.json();
+    const times = (data.hourly && data.hourly.time) || [];
+    let idx = times.findIndex(t => new Date(t).getHours() === targetHour); if (idx < 0) idx = 0;
+    state.weatherByBoard[boardKey()] = {
+      venue: venue.label, address: venue.address,
+      temp: data.hourly.temperature_2m[idx],
+      rainProb: data.hourly.precipitation_probability[idx],
+      precip: data.hourly.precipitation[idx],
+      windSpeed: data.hourly.windspeed_10m[idx],
+      windDir: data.hourly.winddirection_10m[idx]
+    };
+    queueSave(); renderWeather(); syncStatus("Weather loaded");
+  } catch(e) { console.error(e); syncStatus("Weather failed"); alert("Weather lookup failed. Try again."); }
+}
+function movePlayer(name, slot) {
+  if (unavailable()[name]) return;
+  const current = Object.assign({}, assignments());
+  const oldSlot = Object.keys(current).find(k => current[k] === name);
+  const displaced = current[slot];
+  if (oldSlot) delete current[oldSlot];
+  current[slot] = name;
+  if (displaced && oldSlot && displaced !== name) current[oldSlot] = displaced;
+  state.assignmentsByBoard[boardKey()] = current;
+  autoLearnFrameNumber(name, slot);
+  queueSave(); render();
+}
+function removePlayer(slot) { const c = Object.assign({}, assignments()); delete c[slot]; state.assignmentsByBoard[boardKey()] = c; queueSave(); render(); }
+function clearTeam() { state.assignmentsByBoard[boardKey()] = {}; queueSave(); render(); }
+function toggleUnavailable(name) {
+  const u = Object.assign({}, unavailable()); u[name] = !u[name];
+  state.unavailableByTeamWeekend[teamWeekendKey()] = u;
+  if (u[name]) {
+    for (const squad of squadOptions) for (const coach of coachOptions[state.activeTeam]) {
+      const key = state.activeTeam + "__" + state.activeWeekend + "__" + squad + "__" + coach;
+      const board = Object.assign({}, state.assignmentsByBoard[key] || {});
+      Object.keys(board).forEach(k => { if (board[k] === name) delete board[k]; });
+      state.assignmentsByBoard[key] = board;
+    }
+  }
+  queueSave(); render();
+}
+function setCoachNote(name, value) { const n = Object.assign({}, notes()); n[name] = value; state.notesByTeamWeekend[teamWeekendKey()] = n; queueSave(); }
+function csvEscape(v) { return '"' + String(v || "").replace(/"/g,'""') + '"'; }
+function exportCsv() {
+  const a = assignments(), u = unavailable(), n = notes();
+  const rows = ["programme,weekend,squad,coach,opponent,slot,position,player,status,note"];
+  for (const s of spots) {
+    const p = a[s.code] || "";
+    rows.push([state.activeTeam,state.activeWeekend,state.activeSquad,state.activeCoach,opponent(),s.code,s.name,p,(p && u[p])?"Unavailable":"Available",p?(n[p]||""):""].map(csvEscape).join(","));
+  }
+  for (const code of benchSpots) {
+    const p = a[code] || "";
+    rows.push([state.activeTeam,state.activeWeekend,state.activeSquad,state.activeCoach,opponent(),code,"Bench",p,(p && u[p])?"Unavailable":"Available",p?(n[p]||""):""].map(csvEscape).join(","));
+  }
+  const blob = new Blob([rows.join("\n")], {type:"text/csv"});
+  const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
+  link.download = state.activeTeam.toLowerCase() + "-" + state.activeSquad.replace(/\s+/g,'-') + "-" + state.activeCoach.toLowerCase() + ".csv";
+  link.click(); URL.revokeObjectURL(link.href);
+}
+
+
+function getPlayerGroup(name) {
+  return state.playerPositionGroups[name] || defaultPositionGroup;
+}
+function getPlayerGroups(name) {
+  const value = state.playerPositionGroups[name];
+  if (Array.isArray(value)) return value.length ? value : [defaultPositionGroup];
+  return [value || defaultPositionGroup];
+}
+function setPlayerGroup(name, group) {
+  state.playerPositionGroups[name] = group || defaultPositionGroup;
+  queueSave();
+  renderPlayers();
+}
+function renderGroupFilters() {
+  const row = document.getElementById("groupFilters");
+  if (!row) return;
+  row.innerHTML = "";
+  positionGroups.forEach((group) => {
+    const btn = document.createElement("button");
+    btn.className = "group-filter" + (state.activeGroupFilter === group ? " active" : "");
+    btn.textContent = group;
+    btn.onclick = () => {
+      state.activeGroupFilter = group;
+      queueSave();
+      renderPlayers();
+    };
+    row.appendChild(btn);
+  });
+}
+
+
+function medicalStore(){ return state.medicalByTeam[state.activeTeam] || {}; }
+function medical(name){ return medicalStore()[name] || { status:"Available", issue:"", restriction:"", returnDate:"", notes:"", updatedBy:"" }; }
+function medClass(status){
+  if (status === "Available") return "med-available";
+  if (status === "Modified") return "med-modified";
+  if (status === "Return to Play") return "med-rtp";
+  return "med-unavailable";
+}
+function mergedUnavailableMap(){
+  const base = Object.assign({}, unavailable());
+  Object.entries(medicalStore()).forEach(([name, m]) => {
+    if (m && (m.status === "Injured" || m.status === "Unavailable")) base[name] = true;
+  });
+  return base;
+}
+function setMedicalField(name, field, value){
+  if (!name) return;
+  const teamStore = Object.assign({}, state.medicalByTeam[state.activeTeam] || {});
+  const current = Object.assign({ status:"Available", issue:"", restriction:"", returnDate:"", notes:"", updatedBy:"" }, teamStore[name] || {});
+  current[field] = value;
+  teamStore[name] = current;
+  state.medicalByTeam[state.activeTeam] = teamStore;
+
+  if (field === "status" && (value === "Injured" || value === "Unavailable")) {
+    weekendOptions.forEach(weekend => {
+      const twk = state.activeTeam + "__" + weekend;
+      const u = Object.assign({}, state.unavailableByTeamWeekend[twk] || {});
+      u[name] = true;
+      state.unavailableByTeamWeekend[twk] = u;
+      squadOptions.forEach(squad => coachOptions[state.activeTeam].forEach(coach => {
+        const bk = state.activeTeam + "__" + weekend + "__" + squad + "__" + coach;
+        const board = Object.assign({}, state.assignmentsByBoard[bk] || {});
+        Object.keys(board).forEach(k => { if (board[k] === name) delete board[k]; });
+        state.assignmentsByBoard[bk] = board;
+      }));
+    });
+  }
+  queueSave();
+  render();
+}
+function currentMedicalPlayer(){
+  const names = roster().slice().sort((a,b)=>a.localeCompare(b));
+  if (!state.selectedMedicalPlayer || !names.includes(state.selectedMedicalPlayer)) state.selectedMedicalPlayer = names[0] || "";
+  return state.selectedMedicalPlayer;
+}
+function selectMedicalPlayer(name){
+  state.selectedMedicalPlayer = name || "";
+  queueSave();
+  renderMedical();
+}
+
+function openAssignModal(slotCode){
+  state.assignTargetSlot = slotCode;
+  const spot = spots.find(s => s.code === slotCode) || { name: slotCode };
+  document.getElementById("assignModalTitle").textContent = "Assign player to " + spot.name;
+  const input = document.getElementById("assignModalInput");
+  const datalist = document.getElementById("assignModalOptions");
+  const a = assignments();
+  const assignedNames = new Set(Object.values(a));
+  const availableNames = roster().slice().sort((x,y)=>x.localeCompare(y))
+    .filter(name => !mergedUnavailableMap()[name])
+    .filter(name => !assignedNames.has(name) || a[slotCode] === name);
+  datalist.innerHTML = availableNames.map(name => `<option value="${name}"></option>`).join("");
+  input.value = "";
+  document.getElementById("assignModalBackdrop").classList.add("show");
+  setTimeout(()=>input.focus(), 10);
+}
+function closeAssignModal(){
+  document.getElementById("assignModalBackdrop").classList.remove("show");
+}
+function saveAssignModal(){
+  const name = document.getElementById("assignModalInput").value.trim();
+  if (!name) return;
+  closeAssignModal();
+  movePlayer(name, state.assignTargetSlot);
+}
+function renderMode(){
+  const selector = document.getElementById("selectorView");
+  const medicalView = document.getElementById("medicalView");
+  const sbtn = document.getElementById("selectorModeBtn");
+  const mbtn = document.getElementById("medicalModeBtn");
+  sbtn.classList.toggle("active", state.uiMode === "selector");
+  mbtn.classList.toggle("active", state.uiMode === "medical");
+  selector.classList.toggle("hidden", state.uiMode !== "selector");
+  medicalView.classList.toggle("hidden", state.uiMode !== "medical");
+}
+function renderMedical(){
+  const names = roster().slice().sort((a,b)=>a.localeCompare(b));
+  document.getElementById("medKpiProgramme").textContent = state.activeTeam;
+  let a=0,m=0,u=0;
+  names.forEach(name => {
+    const st = medical(name).status;
+    if (st === "Available") a++;
+    else if (st === "Modified" || st === "Return to Play") m++;
+    else u++;
+  });
+  document.getElementById("medKpiAvailable").textContent = a;
+  document.getElementById("medKpiModified").textContent = m;
+  document.getElementById("medKpiUnavailable").textContent = u;
+
+  const dl = document.getElementById("medicalPlayerOptions");
+  dl.innerHTML = names.map(n => `<option value="${n}"></option>`).join("");
+  const selected = currentMedicalPlayer();
+  const search = document.getElementById("medicalPlayerSearch");
+  search.value = selected;
+  search.onchange = e => { if (names.includes(e.target.value.trim())) selectMedicalPlayer(e.target.value.trim()); };
+  search.oninput = e => { if (names.includes(e.target.value.trim())) selectMedicalPlayer(e.target.value.trim()); };
+
+  const info = Object.assign({ status:"Available", issue:"", restriction:"", returnDate:"", notes:"", updatedBy:"" }, medical(selected));
+  document.getElementById("medicalStatusInput").value = info.status;
+  document.getElementById("medicalIssueInput").value = info.issue || "";
+  document.getElementById("medicalRestrictionInput").value = info.restriction || "";
+  document.getElementById("medicalReturnInput").value = info.returnDate || "";
+  document.getElementById("medicalUpdatedByInput").value = info.updatedBy || "";
+  document.getElementById("medicalNotesInput").value = info.notes || "";
+  document.getElementById("medicalCurrentStatus").innerHTML = selected
+    ? `<span class="medpill ${medClass(info.status)}">${info.status}</span><br>${info.issue || "No issue recorded"}${info.restriction ? " • " + info.restriction : ""}${info.returnDate ? " • Return: " + info.returnDate : ""}${info.updatedBy ? "<br>Updated by " + info.updatedBy : ""}`
+    : "No player selected yet.";
+
+  document.getElementById("medicalStatusInput").onchange = e => setMedicalField(selected, "status", e.target.value);
+  document.getElementById("medicalIssueInput").oninput = e => setMedicalField(selected, "issue", e.target.value);
+  document.getElementById("medicalRestrictionInput").oninput = e => setMedicalField(selected, "restriction", e.target.value);
+  document.getElementById("medicalReturnInput").oninput = e => setMedicalField(selected, "returnDate", e.target.value);
+  document.getElementById("medicalUpdatedByInput").oninput = e => setMedicalField(selected, "updatedBy", e.target.value);
+  document.getElementById("medicalNotesInput").oninput = e => setMedicalField(selected, "notes", e.target.value);
+
+  const board = document.getElementById("medicalBoardList");
+  const flagged = names.filter(name => {
+    const st = medical(name).status;
+    return st === "Injured" || st === "Unavailable" || st === "Modified" || st === "Return to Play";
+  });
+  board.innerHTML = flagged.length ? flagged.map(name => {
+    const x = medical(name);
+    return `<div class="medical-board-item" data-player="${name}">
+      <div class="medical-board-name">${name}</div>
+      <div><span class="medpill ${medClass(x.status)}">${x.status}</span></div>
+      <div class="medical-board-meta">${x.issue || "No issue listed"}${x.restriction ? "<br>" + x.restriction : ""}${x.returnDate ? "<br>Return: " + x.returnDate : ""}${x.notes ? "<br>" + x.notes : ""}</div>
+    </div>`;
+  }).join("") : '<div class="medical-empty">No current injured or unavailable players recorded.</div>';
+  Array.from(board.querySelectorAll("[data-player]")).forEach(el => el.onclick = () => selectMedicalPlayer(el.getAttribute("data-player")));
+}
+
+
+
+
+function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+  const r = typeof radius === "number" ? { tl: radius, tr: radius, br: radius, bl: radius } : radius;
+  ctx.beginPath();
+  ctx.moveTo(x + r.tl, y);
+  ctx.lineTo(x + width - r.tr, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + r.tr);
+  ctx.lineTo(x + width, y + height - r.br);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - r.br, y + height);
+  ctx.lineTo(x + r.bl, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - r.bl);
+  ctx.lineTo(x, y + r.tl);
+  ctx.quadraticCurveTo(x, y, x + r.tl, y);
+  ctx.closePath();
+  if (fill) ctx.fill();
+  if (stroke) ctx.stroke();
+}
+
+function copySourceBoardKey(sourceCoach){
+  return state.activeTeam + "__" + state.activeWeekend + "__" + state.activeSquad + "__" + sourceCoach;
+}
+function openCopyCoachModal(){
+  const select = document.getElementById("copyCoachSelect");
+  const options = (coachOptions[state.activeTeam] || []).filter(c => c !== state.activeCoach);
+  select.innerHTML = options.map(c => `<option value="${c}">${c}</option>`).join("");
+  document.getElementById("copyCoachBackdrop").classList.add("show");
+}
+function closeCopyCoachModal(){
+  document.getElementById("copyCoachBackdrop").classList.remove("show");
+}
+function confirmCopyCoach(){
+  const sourceCoach = document.getElementById("copyCoachSelect").value;
+  if (!sourceCoach) return;
+  const sourceKey = copySourceBoardKey(sourceCoach);
+  const sourceAssignments = JSON.parse(JSON.stringify(state.assignmentsByBoard[sourceKey] || {}));
+  state.assignmentsByBoard[boardKey()] = sourceAssignments;
+  closeCopyCoachModal();
+  queueSave();
+  render();
+}
+function exportTeamGraphic(){
+  const canvas = document.getElementById("exportGraphicCanvas");
+  if (!canvas) return alert("Export canvas not found.");
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return alert("Could not create graphic.");
+
+  const W = canvas.width, H = canvas.height;
+  const a = assignments();
+  const title = `${state.activeTeam} • ${state.activeSquad}`;
+  const subtitle = `${state.activeCoach} • ${state.activeWeekend}` + (opponent() ? ` • vs ${opponent()}` : "");
+  const brand = "Boitsfort Rugby Club";
+
+  const grad = ctx.createLinearGradient(0, 0, W, H);
+  grad.addColorStop(0, "#0f172a");
+  grad.addColorStop(1, "#166534");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  roundRect(ctx, 40, 40, W-80, 170, 26, true, false);
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "700 26px Arial";
+  ctx.fillText(brand, 70, 92);
+  ctx.font = "700 52px Arial";
+  ctx.fillText(title, 70, 150);
+  ctx.font = "400 24px Arial";
+  ctx.fillStyle = "rgba(255,255,255,0.92)";
+  ctx.fillText(subtitle, 70, 188);
+
+  const pitchX = 60, pitchY = 250, pitchW = 1280, pitchH = 1180;
+  ctx.fillStyle = "#169c43";
+  roundRect(ctx, pitchX, pitchY, pitchW, pitchH, 34, true, false);
+  ctx.strokeStyle = "rgba(255,255,255,0.92)";
+  ctx.lineWidth = 4;
+  [0.08,0.24,0.50,0.76,0.92].forEach(r=>{
+    const y = pitchY + pitchH*r;
+    ctx.beginPath(); ctx.moveTo(pitchX, y); ctx.lineTo(pitchX+pitchW, y); ctx.stroke();
+  });
+  ctx.beginPath();
+  ctx.moveTo(pitchX + pitchW/2, pitchY);
+  ctx.lineTo(pitchX + pitchW/2, pitchY + pitchH);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(pitchX + pitchW/2, pitchY + pitchH/2, 85, 0, Math.PI*2);
+  ctx.stroke();
+
+  function drawChip(cx, cy, num, role, name){
+    const chipW = 170, chipH = 78;
+    const x = cx - chipW/2, y = cy - chipH/2;
+    ctx.fillStyle = "rgba(15,23,42,0.94)";
+    roundRect(ctx, x, y, chipW, chipH, 18, true, false);
+    ctx.strokeStyle = "rgba(255,255,255,0.18)";
+    ctx.lineWidth = 2;
+    roundRect(ctx, x, y, chipW, chipH, 18, false, true);
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "700 16px Arial";
+    ctx.fillText(String(num), x+12, y+22);
+    ctx.font = "400 11px Arial";
+    ctx.fillStyle = "rgba(255,255,255,0.8)";
+    ctx.fillText(role, x+12, y+38);
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "700 15px Arial";
+    const display = name || "—";
+    const words = display.split(" ");
+    let line1 = display, line2 = "";
+    if (ctx.measureText(display).width > chipW-24 && words.length > 1){
+      const mid = Math.ceil(words.length/2);
+      line1 = words.slice(0, mid).join(" ");
+      line2 = words.slice(mid).join(" ");
+    }
+    ctx.fillText(line1, x+12, y+58);
+    if (line2){
+      ctx.font = "700 13px Arial";
+      ctx.fillText(line2, x+12, y+73);
+    }
+  }
+
+  spots.forEach(s => {
+    const cx = pitchX + pitchW*(s.left/100);
+    const cy = pitchY + pitchH*(s.top/100);
+    drawChip(cx, cy, s.code, s.name, a[s.code] || "");
+  });
+
+  const benchY = 1470;
+  ctx.fillStyle = "rgba(255,255,255,0.08)";
+  roundRect(ctx, 40, benchY, W-80, 360, 26, true, false);
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "700 28px Arial";
+  ctx.fillText("Bench", 70, benchY + 44);
+
+  const cols = 2;
+  const boxW = 610, boxH = 58;
+  benchSpots.forEach((code, i) => {
+    const col = i % cols, row = Math.floor(i / cols);
+    const x = 70 + col * (boxW + 30);
+    const y = benchY + 80 + row * (boxH + 16);
+    ctx.fillStyle = "rgba(15,23,42,0.86)";
+    roundRect(ctx, x, y, boxW, boxH, 16, true, false);
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "700 18px Arial";
+    ctx.fillText(code, x + 16, y + 35);
+    ctx.font = "400 18px Arial";
+    ctx.fillText(a[code] || "—", x + 58, y + 35);
+  });
+
+  ctx.fillStyle = "rgba(255,255,255,0.8)";
+  ctx.font = "400 18px Arial";
+  ctx.fillText(new Date().toLocaleString(), 70, H - 36);
+
+  const link = document.createElement("a");
+  const safeTitle = `${state.activeTeam}_${state.activeSquad}_${state.activeCoach}_${state.activeWeekend}`.replace(/\s+/g, "_");
+  link.href = canvas.toDataURL("image/png");
+  link.download = `${safeTitle}.png`;
+  link.click();
+}
+
+function renderControls() {
+  document.getElementById("selectorModeBtn").onclick = () => { state.uiMode = "selector"; queueSave(); render(); };
+  document.getElementById("medicalModeBtn").onclick = () => { state.uiMode = "medical"; queueSave(); render(); };
+  const copyBtn = document.getElementById("copyCoachBtn");
+  const exportBtn = document.getElementById("exportGraphicBtn");
+  const copyClose = document.getElementById("copyCoachClose");
+  const copyConfirm = document.getElementById("copyCoachConfirm");
+  const copyBackdrop = document.getElementById("copyCoachBackdrop");
+  if (copyBtn) copyBtn.onclick = openCopyCoachModal;
+  if (exportBtn) exportBtn.onclick = exportTeamGraphic;
+  if (copyClose) copyClose.onclick = closeCopyCoachModal;
+  if (copyConfirm) copyConfirm.onclick = confirmCopyCoach;
+  if (copyBackdrop) copyBackdrop.onclick = (e) => { if (e.target.id === "copyCoachBackdrop") closeCopyCoachModal(); };
+
+  const teamRow = document.getElementById("teamRow"), w = document.getElementById("weekendRow"), s = document.getElementById("squadRow"), c = document.getElementById("coachRow");
+  teamRow.innerHTML=""; w.innerHTML=""; s.innerHTML=""; c.innerHTML="";
+  const searchInput = document.getElementById("searchInput"); if (searchInput) searchInput.value = state.search || "";
+  teamOptions.forEach(opt => {
+    const b = document.createElement("button"); b.textContent = opt; b.style.background = opt===state.activeTeam ? "#16a34a" : "rgba(255,255,255,.08)"; b.style.color = "white";
+    b.onclick = ()=>{ state.activeTeam = opt; state.search = ""; state.activeGroupFilter = "All"; if(!coachOptions[opt].includes(state.activeCoach)) state.activeCoach = defaultCoachForTeam(opt); queueSave(); render(); };
+    teamRow.appendChild(b);
+  });
+  weekendOptions.forEach(opt => {
+    const b = document.createElement("button"); b.textContent = opt; b.style.background = opt===state.activeWeekend ? "#16a34a" : "rgba(255,255,255,.08)"; b.style.color = "white";
+    b.onclick = ()=>{ state.activeWeekend = opt; queueSave(); render(); }; w.appendChild(b);
+  });
+  squadOptions.forEach(opt => {
+    const b = document.createElement("button"); b.textContent = opt; b.style.background = opt===state.activeSquad ? "#2563eb" : "rgba(255,255,255,.08)"; b.style.color = "white";
+    b.onclick = ()=>{ state.activeSquad = opt; queueSave(); render(); }; s.appendChild(b);
+  });
+  coachOptions[state.activeTeam].forEach(opt => {
+    const b = document.createElement("button"); b.textContent = opt; b.style.background = opt===state.activeCoach ? "#ffffff" : "rgba(255,255,255,.08)"; b.style.color = opt===state.activeCoach ? "#111827" : "white";
+    b.onclick = ()=>{ state.activeCoach = opt; queueSave(); render(); }; c.appendChild(b);
+  });
+  document.getElementById("coachHelp").textContent = "Selections are saved separately by coach tab.";
+  const trainingBtn = document.getElementById("trainingLinkBtn");
+  if (trainingBtn) {
+    trainingBtn.href = trainingLinks[state.activeTeam] || "#";
+    trainingBtn.textContent = "Training";
+  }
+  document.getElementById("opponentInput").value = opponent();
+  document.getElementById("venueSelect").value = venueMode();
+  document.getElementById("kickoffInput").value = kickoff();
+  document.getElementById("homeBtn").style.opacity = venueMode()==="home" ? "1" : ".7";
+  document.getElementById("awayBtn").style.opacity = venueMode()!=="home" ? "1" : ".7";
+  document.getElementById("weatherSummary").textContent = weather() ? (weather().venue + " • " + (opponent() || "Opponent TBC")) : "Set venue and kick-off time, then tap Weather.";
+  document.getElementById("newPlayerInput").placeholder = "Add player to " + state.activeTeam;
+  document.getElementById("rosterInfo").textContent = state.activeTeam + " roster • " + roster().length + " players";
+}
+function renderWeather() {
+  const w = weather(), grid = document.getElementById("weatherGrid");
+  if (!w) { grid.innerHTML=""; document.getElementById("weatherImpact").textContent=""; return; }
+  grid.innerHTML = '<div><strong>Temp</strong><br>' + w.temp + '°C</div><div><strong>Wind</strong><br>' + w.windSpeed + ' km/h</div><div><strong>Direction</strong><br>' + w.windDir + '°</div><div><strong>Rain</strong><br>' + w.precip + ' mm</div><div><strong>Rain chance</strong><br>' + w.rainProb + '%</div><div><strong>Venue</strong><br>' + w.venue + '</div>';
+  document.getElementById("weatherImpact").textContent = weatherImpact(w);
+}
+
+function renderPitch() {
+  const pitch = document.getElementById("pitch"); pitch.querySelectorAll(".slot").forEach(el=>el.remove());
+  document.getElementById("pitchBadge").textContent = state.activeTeam + " • " + state.activeSquad + " • " + state.activeCoach + " • " + state.activeWeekend + (opponent() ? " • " + opponent() : "");
+  const a = assignments();
+  const mergedUnavailable = mergedUnavailableMap();
+  spots.forEach(s => {
+    const p = a[s.code];
+    const div = document.createElement("div");
+    div.className = "slot"; div.style.top = s.top + "%"; div.style.left = s.left + "%";
+    div.innerHTML = '<div class="num">'+s.code+'</div><div class="pos">'+s.name+'</div><div class="name clickable" draggable="'+(p && !mergedUnavailable[p] ? 'true' : 'false')+'">'+(p || 'Drop here')+'</div>' + (p ? '<button class="remove">Remove</button>' : '');
+    div.addEventListener("dragover", e=>e.preventDefault());
+    div.addEventListener("drop", e=>{ e.preventDefault(); const name = e.dataTransfer.getData("text/plain"); if (name && !mergedUnavailable[name]) movePlayer(name, s.code); });
+    const dn = div.querySelector(".name");
+    dn.onclick = ()=>openAssignModal(s.code);
+    if (p && !mergedUnavailable[p]) dn.addEventListener("dragstart", e=>e.dataTransfer.setData("text/plain", p));
+    const rem = div.querySelector(".remove"); if (rem) rem.onclick = ()=>removePlayer(s.code);
+    pitch.appendChild(div);
+  });
+  document.getElementById("assignModalClose").onclick = closeAssignModal;
+  document.getElementById("assignModalSave").onclick = saveAssignModal;
+  document.getElementById("assignModalInput").onkeydown = (e)=>{ if(e.key==="Enter"){ e.preventDefault(); saveAssignModal(); }};
+  document.getElementById("assignModalBackdrop").onclick = (e)=>{ if(e.target.id==="assignModalBackdrop") closeAssignModal(); };
+}
+
+
+function renderBench() {
+  const bench = document.getElementById("benchGrid");
+  bench.innerHTML = "";
+  const a = assignments(), n = notes(), mergedUnavailable = mergedUnavailableMap();
+
+  benchSpots.forEach(code => {
+    const p = a[code];
+    const div = document.createElement("div");
+    div.className = "bench-slot";
+    div.innerHTML =
+      '<div style="display:flex;justify-content:space-between;gap:8px;align-items:center;position:relative;z-index:3;">' +
+        '<strong>'+code+'</strong>' +
+        (p ? '<button type="button" class="remove" style="position:relative;z-index:4;">Remove</button>' : '') +
+      '</div>' +
+      '<button type="button" class="name clickable" style="margin-top:8px;width:100%;background:rgba(255,255,255,.1);border:none;color:white;border-radius:10px;padding:10px 8px;min-height:40px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;cursor:pointer;position:relative;z-index:1;">'+
+        (p || 'Click to assign / drop here') +
+      '</button>' +
+      ((p && n[p]) ? '<div class="small" style="margin-top:8px;">'+n[p]+'</div>' : '');
+
+    div.addEventListener("dragover", e => e.preventDefault());
+    div.addEventListener("drop", e => {
+      e.preventDefault();
+      const name = e.dataTransfer.getData("text/plain");
+      if (name && !mergedUnavailable[name]) movePlayer(name, code);
+    });
+
+    const nameEl = div.querySelector(".name");
+    nameEl.onclick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openAssignModal(code);
+    };
+
+    if (p && !mergedUnavailable[p]) {
+      nameEl.draggable = true;
+      nameEl.addEventListener("dragstart", e => e.dataTransfer.setData("text/plain", p));
+    }
+
+    const rem = div.querySelector(".remove");
+    if (rem) {
+      rem.onclick = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        removePlayer(code);
+      };
+    }
+
+    bench.appendChild(div);
+  });
+}
+
+function renderPlayers() {
+  const list = document.getElementById("playerList");
+  list.innerHTML = "";
+  const a = assignments(), n = notes(), search = state.search.toLowerCase();
+  const mergedUnavailable = mergedUnavailableMap();
+  const visible = roster().slice().sort((x,y)=>x.localeCompare(y))
+    .filter(name => name.toLowerCase().includes(search))
+    .filter(name => {
+      if (state.activeGroupFilter === "All") return true;
+      const groups = getPlayerGroups(name);
+      return groups.includes(state.activeGroupFilter);
+    });
+
+  const assignedCount = visible.filter(name => Object.values(a).includes(name)).length;
+  document.getElementById("unassignedCount").textContent = `${visible.length} listed • ${assignedCount} assigned`;
+
+  visible.forEach(name => {
+    const out = !!mergedUnavailable[name];
+    const assignedSpot = Object.entries(a).find(([spot, player]) => player === name);
+    const safe = (n[name] || "").replace(/"/g, "&quot;");
+
+    const div = document.createElement("div");
+    div.className = "player" + (out ? " unavail" : "");
+    div.draggable = !out;
+    div.innerHTML = '<div class="player-top"><div><div class="player-name">'+name+'</div>' +
+      (assignedSpot ? '<div class="small" style="margin-top:4px;">Assigned: '+assignedSpot[0]+'</div>' : '') +
+      '</div><div class="row"><button class="toggle '+(out?'unavail-btn':'avail')+'">'+(out?'Unavailable':'Available')+'</button><button class="toggle btn-red deleteBtn" style="padding:6px 10px;">Delete</button></div></div>' +
+      renderFrameStatsForPlayer(name) +
+      '<input class="note" type="text" placeholder="Coach note" value="'+safe+'">';
+
+    div.addEventListener("dragstart", e => { if (!out) e.dataTransfer.setData("text/plain", name); });
+    div.querySelector(".toggle").onclick = () => toggleUnavailable(name);
+    div.querySelector(".deleteBtn").onclick = () => deletePlayer(name);
+    div.querySelector(".note").oninput = e => setCoachNote(name, e.target.value);
+    list.appendChild(div);
+  });
+}
+function renderMatchCenter() {
+  const cfg = sourceConfig();
+  document.getElementById("sourceNote").textContent = cfg.note + " Source: " + cfg.url;
+  document.getElementById("sourceFrame").src = cfg.url;
+  document.getElementById("openSourceBtn").onclick = ()=> window.open(cfg.url, "_blank", "noopener");
+  const sr = document.getElementById("sourceRow"); sr.innerHTML = "";
+  ["Senior__1st XV","Senior__2nd XV","U18__1st XV","U18__2nd XV"].forEach(key => {
+    const b = document.createElement("button");
+    b.textContent = key.replace("__"," ");
+    b.className = key === sourceKey() ? "btn-white" : "btn-blue";
+    b.onclick = ()=> {
+      const [team, squad] = key.split("__");
+      state.activeTeam = team; state.activeSquad = squad;
+      if(!coachOptions[team].includes(state.activeCoach)) state.activeCoach = defaultCoachForTeam(team);
+      queueSave(); render();
+    };
+    sr.appendChild(b);
+  });
+  const list = document.getElementById("feedList");
+  list.innerHTML = '<div class="small">Loading recent public items…</div>';
+  const target = "https://api.allorigins.win/raw?url=" + encodeURIComponent(cfg.url);
+  fetch(target).then(r => r.text()).then(html => {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const anchors = Array.from(doc.querySelectorAll("a")).map(a => {
+      const txt = (a.textContent || "").trim().replace(/\s+/g, " ");
+      const href = a.href;
+      return {txt, href};
+    }).filter(x => x.txt && x.href && /Division 1|D1 Réserves|U16|U18|Régionales|Boitsfort|Soignies|Kituro|Liège|ASUB|ROC|Frameries|Namur|La Hulpe/i.test(x.txt));
+    const unique = []; const seen = new Set();
+    for (const a of anchors) {
+      const k = a.txt + "|" + a.href;
+      if (!seen.has(k)) { seen.add(k); unique.push(a); }
+      if (unique.length >= 12) break;
+    }
+    list.innerHTML = unique.length ? unique.map(a => '<div class="feed-item"><a href="'+a.href+'" target="_blank" rel="noopener">'+a.txt+'</a></div>').join("") : '<div class="small">No recent public items found from this source page.</div>';
+  }).catch(err => {
+    console.error(err);
+    list.innerHTML = '<div class="small">Browser fetch could not read the source directly. Use the “Open official page” button for the full live table/results page.</div>';
+  });
+}
+
+document.getElementById("searchInput").addEventListener("input", e=>{ state.search = e.target.value; renderPlayers(); });
+document.getElementById("opponentInput").addEventListener("input", e=>setOpponent(e.target.value));
+document.getElementById("venueSelect").addEventListener("change", e=>setVenueMode(e.target.value));
+document.getElementById("kickoffInput").addEventListener("change", e=>setKickoff(e.target.value));
+document.getElementById("homeBtn").onclick = ()=>{ setVenueMode("home"); document.getElementById("venueSelect").value = "home"; };
+document.getElementById("awayBtn").onclick = ()=>{ if (venueMode()==="home") setVenueMode("liege"); };
+document.getElementById("weatherBtn").onclick = fetchWeather;
+document.getElementById("clearBtn").onclick = clearTeam;
+document.getElementById("csvBtn").onclick = exportCsv;
+document.getElementById("addPlayerBtn").onclick = addPlayer;
+document.getElementById("newPlayerInput").addEventListener("keydown", e=>{ if (e.key === "Enter") addPlayer(); });
+
+(function initFirebase(){
+  try {
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    sharedDocRef = db.collection("shared").doc("selectorState_coachtabs_matchcenter_v2");
+    sharedDocRef.onSnapshot(async snap => {
+      try {
+        if (!snap.exists) {
+          await sharedDocRef.set(JSON.parse(JSON.stringify(state)));
+          firestoreReady = true;
+          syncStatus("Saved live");
+          return;
+        }
+        const remoteState = ensureShape(snap.data() || {});
+        if ((remoteState.syncRevision || 0) < (state.syncRevision || 0)) {
+          firestoreReady = true;
+          return;
+        }
+        isApplyingRemote = true;
+        state = remoteState;
+        try { localStorage.setItem(LOCAL_STATE_KEY, JSON.stringify(state)); } catch(e) {}
+        firestoreReady = true;
+        syncStatus("Saved live");
+        render();
+      } catch(e) { console.error(e); syncStatus("Sync error"); }
+      finally { isApplyingRemote = false; }
+    }, err => { console.error(err); syncStatus("Sync error"); });
+  } catch(e) { console.error(e); syncStatus("Connection failed"); }
+})();
+
+function render() { renderControls(); renderMode(); renderWeather(); renderPitch(); renderBench(); renderGroupFilters(); renderPlayers(); renderMatchCenter(); renderMedical(); }
+render();
+loadFrameSportsStats();
+setInterval(loadFrameSportsStats, 5 * 60 * 1000);
+</script>
+</body>
+</html>
