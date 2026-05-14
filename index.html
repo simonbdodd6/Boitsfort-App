@@ -148,7 +148,7 @@ input[type=text],input[type=datetime-local],select,textarea{width:100%;padding:1
       <div>
         <div class="eyebrow">Boitsfort Rugby Club</div>
         <h1>Live Coach Matchday Selector</h1>
-        <div class="sub">Coach-specific tabs, Senior + U18, weather, editable bench, and a Match Center fed by public rugby pages.</div>
+        <div class="sub">Coach-specific tabs, Senior + U18, weather, editable bench, Match Center, training link, and safer live saving.</div>
       </div>
     </div>
     <div class="controls">
@@ -424,7 +424,7 @@ try {
   const localRaw = localStorage.getItem(LOCAL_STATE_KEY);
   if (localRaw) state = ensureShape(JSON.parse(localRaw));
 } catch(e) {}
-if (!state.syncRevision) state.syncRevision = Date.now();
+if (!state.syncRevision) state.syncRevision = 0;
 let sharedDocRef = null, firestoreReady = false, isApplyingRemote = false, saveTimer = null;
 const boardKey = ()=> state.activeTeam + "__" + state.activeWeekend + "__" + state.activeSquad + "__" + state.activeCoach;
 const teamWeekendKey = ()=> state.activeTeam + "__" + state.activeWeekend;
@@ -1254,7 +1254,9 @@ document.getElementById("newPlayerInput").addEventListener("keydown", e=>{ if (e
           return;
         }
         const remoteState = ensureShape(snap.data() || {});
-        if ((remoteState.syncRevision || 0) < (state.syncRevision || 0)) {
+        // Trust Firebase when the page opens so yesterday's saved team loads again.
+        // Local edits still save normally through queueSave().
+        if (false) {
           firestoreReady = true;
           return;
         }
